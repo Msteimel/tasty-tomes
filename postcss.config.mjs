@@ -1,5 +1,6 @@
+// PostCSS configuration without Tailwind (pure CSS token-driven design)
 const config = {
-  plugins: ["@tailwindcss/postcss"],
+  plugins: [],
 };
 
 export default config;

@@ -1,0 +1,24 @@
+:root {
+  /* HSL components (h s l) without % sign for reuse */
+  --color-background: 0 0% 100%;
+  --color-foreground: 222 47% 11%;
+  --color-muted: 210 40% 96%;
+  --color-muted-foreground: 215 16% 47%;
+  --color-border: 214 32% 91%;
+  --color-ring: 222 84% 66%;
+  --color-primary: 262 83% 58%;
+  --color-primary-foreground: 210 40% 98%;
+  --color-shadow: 222 47% 11%;
+}
+
+.dark {
+  --color-background: 222 47% 11%;
+  --color-foreground: 210 40% 98%;
+  --color-muted: 217 33% 17%;
+  --color-muted-foreground: 215 20% 65%;
+  --color-border: 217 33% 25%;
+  --color-ring: 263 70% 50%;
+  --color-primary: 263 70% 50%;
+  --color-primary-foreground: 210 40% 98%;
+  --color-shadow: 210 40% 2%;
+}

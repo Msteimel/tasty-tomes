@@ -1,0 +1,71 @@
+@import "../../app/globals.css";
+
+.buttonBase {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  line-height: 1;
+  transition: background-color 120ms, color 120ms, box-shadow 120ms;
+  height: 2.5rem;
+  padding-inline: 1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: hsl(var(--color-primary));
+  color: hsl(var(--color-primary-foreground));
+  box-shadow: 0 2px 4px -2px hsl(var(--color-shadow) / 0.16),
+    0 4px 6px -1px hsl(var(--color-shadow) / 0.12);
+}
+.buttonBase:focus-visible {
+  outline: 2px solid hsl(var(--color-ring));
+  outline-offset: 2px;
+}
+.buttonBase:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.variant-default {
+  /* already default styles - keep for API */
+}
+.variant-default:hover {
+  background: hsl(var(--color-primary) / 0.9);
+}
+
+.variant-outline {
+  background: hsl(var(--color-background));
+  color: hsl(var(--color-foreground));
+  border-color: hsl(var(--color-border));
+}
+.variant-outline:hover {
+  background: hsl(var(--color-muted));
+}
+
+.variant-ghost {
+  background: transparent;
+  color: hsl(var(--color-foreground));
+}
+.variant-ghost:hover {
+  background: hsl(var(--color-muted) / 0.6);
+}
+
+.size-sm {
+  height: 2rem;
+  padding-inline: 0.75rem;
+}
+.size-lg {
+  height: 3rem;
+  padding-inline: 1.25rem;
+}
+
+.icon-left {
+  margin-right: 0.5rem;
+  display: inline-flex;
+}
+.icon-right {
+  margin-left: 0.5rem;
+  display: inline-flex;
+}
