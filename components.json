@@ -18,5 +18,14 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
+  "resolvedPaths": {
+    "tailwindConfig": "tailwind.config.ts",
+    "tailwindCss": "src/app/globals.css",
+    "utils": "src/components/lib/utils.ts",
+    "components": "src/components",
+    "ui": "src/components/ui",
+    "lib": "src/lib",
+    "hooks": "src/hooks"
+  },
   "registries": {}
 }
