@@ -3,7 +3,7 @@
 import * as React from "react";
 import { checkIfSignedIn } from "@/app/components/lib/utils";
 import { Button } from "@/app/components/ui/button";
-import { LinkAsButton } from "../../components/ui/LinkAsButton";
+import { LinkAsButton } from "../components/ui/LinkAsButton";
 import { Input } from "@/app/components/ui/input";
 
 export default function SignInPage() {
