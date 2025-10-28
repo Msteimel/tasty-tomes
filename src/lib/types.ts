@@ -7,6 +7,24 @@ export interface Ingredient {
   measurement: string;
 }
 
+export interface RecipeVariant {
+  id: string;
+  variantName: string;
+  description?: string;
+  parentRecipeId: string; // Reference to the original recipe
+  createdBy: string;
+  // Only include fields that are different from the parent recipe
+  ingredients?: Ingredient[]; // If different from parent
+  instructions?: string[]; // If different from parent
+  preparationTime?: number;
+  cookingTime?: number;
+  servingSize?: number;
+  recipeImage?: string;
+  notes?: string; // What makes this variant unique
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Recipe {
   id: string;
   recipeName: string;
@@ -20,6 +38,7 @@ export interface Recipe {
   recipeImage?: string; // URL or path to image
   ingredients: Ingredient[];
   instructions: string[];
+  variants?: RecipeVariant[]; // Array of recipe variants
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,3 +52,4 @@ export interface Cookbook {
   createdAt: Date;
   updatedAt: Date;
 }
+

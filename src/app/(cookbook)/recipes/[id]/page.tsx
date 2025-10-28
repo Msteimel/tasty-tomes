@@ -6,17 +6,39 @@ import { LinkAsButton } from "@/app/components/ui/LinkAsButton";
 
 export default async function RecipePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ variant?: string }>;
 }) {
   const { id } = await params;
+  const { variant: variantId } = await searchParams;
   const recipe = getRecipeById(id);
 
   if (!recipe) {
     notFound();
   }
 
-  const totalTime = recipe.preparationTime + recipe.cookingTime;
+  // Determine which version to display (original or variant)
+  const hasVariants = recipe.variants && recipe.variants.length > 0;
+  const selectedVariant = variantId
+    ? recipe.variants?.find((v) => v.id === variantId)
+    : null;
+
+  // Use variant data if selected, otherwise use recipe data
+  const displayName = selectedVariant
+    ? `${recipe.recipeName} - ${selectedVariant.variantName}`
+    : recipe.recipeName;
+  const displayDescription = selectedVariant?.description || recipe.recipeDescription;
+  const displayIngredients = selectedVariant?.ingredients || recipe.ingredients;
+  const displayInstructions = selectedVariant?.instructions || recipe.instructions;
+  const displayPrepTime = selectedVariant?.preparationTime ?? recipe.preparationTime;
+  const displayCookTime = selectedVariant?.cookingTime ?? recipe.cookingTime;
+  const displayServings = selectedVariant?.servingSize ?? recipe.servingSize;
+  const displayImage = selectedVariant?.recipeImage || recipe.recipeImage;
+  const displayCreator = selectedVariant?.createdBy || recipe.createdBy;
+
+  const totalTime = displayPrepTime + displayCookTime;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -40,22 +62,62 @@ export default async function RecipePage({
           </div>
         </div>
 
-        <h1 className="text-4xl font-bold mb-2">{recipe.recipeName}</h1>
+        <h1 className="text-4xl font-bold mb-2">{displayName}</h1>
         <div className="text-gray-600 mb-4">
           {recipe.originalAuthor && (
             <p className="text-lg">Original recipe by {recipe.originalAuthor}</p>
           )}
-          <p className="text-sm">Digitized by {recipe.createdBy}</p>
+          <p className="text-sm">Digitized by {displayCreator}</p>
+          {selectedVariant && (
+            <p className="text-sm text-blue-600 font-medium mt-1">
+              Variant created by {selectedVariant.createdBy}
+            </p>
+          )}
         </div>
+
+        {/* Variant Selector */}
+        {hasVariants && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-semibold mb-2 text-gray-700">Recipe Versions:</h3>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/recipes/${recipe.id}`}
+                className={`px-4 py-2 rounded-md border transition-colors ${
+                  !variantId
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}>
+                Original
+              </Link>
+              {recipe.variants?.map((variant) => (
+                <Link
+                  key={variant.id}
+                  href={`/recipes/${recipe.id}?variant=${variant.id}`}
+                  className={`px-4 py-2 rounded-md border transition-colors ${
+                    variantId === variant.id
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                  }`}>
+                  {variant.variantName}
+                </Link>
+              ))}
+            </div>
+            {selectedVariant?.notes && (
+              <p className="mt-3 text-sm text-gray-600 italic">
+                <strong>What&apos;s different:</strong> {selectedVariant.notes}
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Recipe Image */}
-      {recipe.recipeImage && (
+      {displayImage && (
         <div className="mb-8 rounded-lg overflow-hidden shadow-lg">
           <div className="relative aspect-video w-full">
             <Image
-              src={recipe.recipeImage}
-              alt={recipe.recipeName}
+              src={displayImage}
+              alt={displayName}
               fill
               className="object-cover"
               priority
@@ -65,9 +127,9 @@ export default async function RecipePage({
       )}
 
       {/* Description */}
-      {recipe.recipeDescription && (
+      {displayDescription && (
         <div className="mb-8">
-          <p className="text-lg text-gray-700">{recipe.recipeDescription}</p>
+          <p className="text-lg text-gray-700">{displayDescription}</p>
         </div>
       )}
 
@@ -77,13 +139,13 @@ export default async function RecipePage({
           <p className="text-sm text-gray-500 uppercase tracking-wide">
             Prep Time
           </p>
-          <p className="text-xl font-semibold">{recipe.preparationTime} min</p>
+          <p className="text-xl font-semibold">{displayPrepTime} min</p>
         </div>
         <div>
           <p className="text-sm text-gray-500 uppercase tracking-wide">
             Cook Time
           </p>
-          <p className="text-xl font-semibold">{recipe.cookingTime} min</p>
+          <p className="text-xl font-semibold">{displayCookTime} min</p>
         </div>
         <div>
           <p className="text-sm text-gray-500 uppercase tracking-wide">
@@ -95,7 +157,7 @@ export default async function RecipePage({
           <p className="text-sm text-gray-500 uppercase tracking-wide">
             Servings
           </p>
-          <p className="text-xl font-semibold">{recipe.servingSize}</p>
+          <p className="text-xl font-semibold">{displayServings}</p>
         </div>
       </div>
 
@@ -106,7 +168,7 @@ export default async function RecipePage({
             Ingredients
           </h2>
           <ul className="space-y-2">
-            {recipe.ingredients.map((ingredient, index) => (
+            {displayIngredients.map((ingredient, index) => (
               <li key={index} className="flex items-start">
                 <span className="text-blue-600 mr-2">•</span>
                 <span>
@@ -131,7 +193,7 @@ export default async function RecipePage({
             Instructions
           </h2>
           <ol className="space-y-4">
-            {recipe.instructions.map((instruction, index) => (
+            {displayInstructions.map((instruction, index) => (
               <li key={index} className="flex items-start">
                 <span className="font-bold text-blue-600 mr-3 min-w-8">
                   {index + 1}.

@@ -4,6 +4,11 @@ import { dummyCookbooks, dummyRecipes } from "@/lib/dummyData";
 import { LinkAsButton } from "@/app/components/ui/LinkAsButton";
 
 export default function CookbookPage() {
+  // Filter recipes to only show those created by the current user
+  const currentUserRecipes = dummyRecipes.filter(
+    (recipe) => recipe.createdBy === "Current User",
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Cookbooks Section */}
@@ -73,7 +78,7 @@ export default function CookbookPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dummyRecipes.map((recipe) => (
+          {currentUserRecipes.map((recipe) => (
             <Link
               key={recipe.id}
               href={`/recipes/${recipe.id}`}
@@ -115,7 +120,7 @@ export default function CookbookPage() {
           ))}
         </div>
 
-        {dummyRecipes.length === 0 && (
+        {currentUserRecipes.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg mb-4">
               You don&apos;t have any recipes yet.
