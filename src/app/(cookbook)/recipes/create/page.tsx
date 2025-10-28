@@ -13,31 +13,19 @@ import {
   SelectValue,
 } from "@/app/components/ui/select";
 import { Textarea } from "@/app/components/ui/textarea";
+import { Ingredient, Recipe } from "@/lib/types";
 
-// Type definitions for our recipe data structure
-interface Ingredient {
-  name: string;
-  quantityWhole: number;
-  quantityFraction: string;
-  measurement: string;
-}
-
-interface RecipeFormData {
-  recipeName: string;
-  recipeDescription: string;
-  preparationTime: number;
-  cookingTime: number;
-  servingSize: number;
-  cuisineType: string;
-  originalAuthor: string;
+// Form data type - omits auto-generated fields and handles File for image
+type RecipeFormData = Omit<Recipe, "id" | "createdAt" | "updatedAt" | "createdBy" | "recipeImage"> & {
   recipeImage?: File;
-  ingredients: Ingredient[];
-  instructions: string[];
-}
+};
 
 export default function CreateRecipePage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // TODO: Replace with actual authenticated user
+  const currentUser = "Current User";
 
   // Form data state
   const [formData, setFormData] = useState<RecipeFormData>({
@@ -47,7 +35,7 @@ export default function CreateRecipePage() {
     cookingTime: 0,
     servingSize: 0,
     cuisineType: "",
-    originalAuthor: "",
+    originalAuthor: "", // Optional - for attributing the original recipe creator
     ingredients: [
       { name: "", quantityWhole: 0, quantityFraction: "", measurement: "" },
     ],
@@ -261,21 +249,9 @@ export default function CreateRecipePage() {
     }
   };
 
-  // Helper function to convert fraction string to decimal
-  const fractionToDecimal = (fraction: string): number => {
-    if (!fraction) return 0;
-    const parts = fraction.split("/");
-    if (parts.length === 2) {
-      return parseInt(parts[0]) / parseInt(parts[1]);
-    }
-    return 0;
-  };
-
-  // Helper function to get total quantity as decimal
-  const getTotalQuantity = (ingredient: Ingredient): number => {
-    return (
-      ingredient.quantityWhole + fractionToDecimal(ingredient.quantityFraction)
-    );
+  // Generate a unique ID (simple version - use UUID in production)
+  const generateId = (): string => {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
   };
 
   // Check if form is valid for submission
@@ -340,25 +316,53 @@ export default function CreateRecipePage() {
     setIsSubmitting(true);
 
     try {
-      // You can use getTotalQuantity() when sending to database
-      const formattedData = {
-        ...formData,
-        ingredients: formData.ingredients.map((ing) => ({
-          ...ing,
-          totalQuantity: getTotalQuantity(ing), // Computed decimal value
-        })),
+      const now = new Date();
+      
+      // Convert File to URL string if image exists (in production, upload to storage first)
+      let recipeImageUrl: string | undefined;
+      if (formData.recipeImage) {
+        // TODO: Upload image to storage service and get URL
+        // For now, create a local URL (this won't persist)
+        recipeImageUrl = URL.createObjectURL(formData.recipeImage);
+      }
+
+      // Create complete Recipe object with auto-generated fields
+      const newRecipe: Recipe = {
+        id: generateId(),
+        recipeName: formData.recipeName,
+        recipeDescription: formData.recipeDescription,
+        preparationTime: formData.preparationTime,
+        cookingTime: formData.cookingTime,
+        servingSize: formData.servingSize,
+        cuisineType: formData.cuisineType,
+        originalAuthor: formData.originalAuthor || undefined, // Optional attribution
+        createdBy: currentUser, // Auto-set to current user
+        recipeImage: recipeImageUrl,
+        ingredients: formData.ingredients.filter(
+          // Only include complete ingredients
+          (ing) =>
+            ing.name.trim() &&
+            ing.measurement &&
+            (ing.quantityWhole > 0 || ing.quantityFraction)
+        ),
+        instructions: formData.instructions.filter(
+          // Only include non-empty instructions
+          (inst) => inst.trim()
+        ),
+        createdAt: now,
+        updatedAt: now,
       };
 
-      console.log("Recipe Form Data:", formattedData);
+      console.log("New Recipe:", newRecipe);
 
       // Simulate API call delay (remove this when you add real API)
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Here you would typically send the data to your backend/database
-      // Example: await createRecipe(formattedData);
+      // Example: await createRecipe(newRecipe);
 
-      // Navigate to success page
-      router.push("/recipes/create/success");
+      // Navigate to the newly created recipe page
+      router.push(`/recipes/${newRecipe.id}`);
     } catch (error) {
       console.error("Error creating recipe:", error);
       alert("Failed to create recipe. Please try again.");
@@ -454,7 +458,7 @@ export default function CreateRecipePage() {
             </Select>
           </label>
           <label>
-            Original Author:
+            Original Author (Optional):
             <Input
               type="text"
               name="originalAuthor"
@@ -462,7 +466,11 @@ export default function CreateRecipePage() {
               onChange={(e) =>
                 handleInputChange("originalAuthor", e.target.value)
               }
+              placeholder="e.g., Grandma Betty, Chef Jacques"
             />
+            <p className="text-sm text-gray-500 mt-1">
+              Who originally created this recipe? Leave blank if it&apos;s your own creation.
+            </p>
           </label>
           <label>
             Recipe Image:
