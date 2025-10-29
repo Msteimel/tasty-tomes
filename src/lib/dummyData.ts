@@ -871,6 +871,13 @@ export const dummyCookbooks: Cookbook[] = [
       dummyRecipes[5],
       dummyRecipes[7],
     ], // Carbonara, Cookies, Mac and Cheese, Lemon Bars
+    createdBy: "Current User",
+    members: [
+      { userId: "Current User", role: "owner", addedAt: new Date("2024-01-01") },
+    ],
+    isPublic: false,
+    isCollaborative: false,
+    tags: ["family", "comfort-food", "desserts"],
     createdAt: new Date("2024-01-01"),
     updatedAt: new Date("2024-08-20"),
   },
@@ -888,6 +895,14 @@ export const dummyCookbooks: Cookbook[] = [
       dummyRecipes[4],
       dummyRecipes[6],
     ], // Italian, Thai, French, Indian, Korean
+    createdBy: "Current User",
+    members: [
+      { userId: "Current User", role: "owner", addedAt: new Date("2024-02-01") },
+      { userId: "Sarah Johnson", role: "editor", addedAt: new Date("2024-03-15") },
+    ],
+    isPublic: true,
+    isCollaborative: true,
+    tags: ["international", "asian", "european"],
     createdAt: new Date("2024-02-01"),
     updatedAt: new Date("2024-07-15"),
   },
@@ -899,6 +914,13 @@ export const dummyCookbooks: Cookbook[] = [
     coverImage:
       "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
     recipes: [dummyRecipes[0], dummyRecipes[3], dummyRecipes[5]], // Carbonara, French Onion Soup, Mac and Cheese
+    createdBy: "Current User",
+    members: [
+      { userId: "Current User", role: "owner", addedAt: new Date("2024-03-01") },
+    ],
+    isPublic: false,
+    isCollaborative: false,
+    tags: ["comfort-food", "winter", "hearty"],
     createdAt: new Date("2024-03-01"),
     updatedAt: new Date("2024-06-08"),
   },
@@ -910,6 +932,13 @@ export const dummyCookbooks: Cookbook[] = [
     coverImage:
       "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
     recipes: [dummyRecipes[2], dummyRecipes[6]], // Thai Green Curry, Korean Beef Bulgogi
+    createdBy: "Current User",
+    members: [
+      { userId: "Current User", role: "owner", addedAt: new Date("2024-04-15") },
+    ],
+    isPublic: false,
+    isCollaborative: false,
+    tags: ["quick", "weeknight", "easy"],
     createdAt: new Date("2024-04-15"),
     updatedAt: new Date("2024-07-15"),
   },
