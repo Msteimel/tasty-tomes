@@ -43,12 +43,23 @@ export interface Recipe {
   updatedAt: Date;
 }
 
+export interface CookbookMember {
+  userId: string;
+  role: 'owner' | 'editor' | 'viewer';
+  addedAt: Date;
+}
+
 export interface Cookbook {
   id: string;
   name: string;
   description: string;
   coverImage?: string; // URL or path to image
   recipes: Recipe[]; // Array of recipe IDs or full recipe objects
+  createdBy: string; // User ID of the creator
+  members: CookbookMember[]; // Array of members with their roles
+  isPublic: boolean; // Whether the cookbook is publicly viewable
+  isCollaborative: boolean; // Whether members can add/edit recipes
+  tags?: string[]; // Categories for organization
   createdAt: Date;
   updatedAt: Date;
 }

@@ -51,14 +51,33 @@ export default async function RecipePage({
             ← Back to Cookbook
           </Link>
           <div className="flex gap-2">
-            <LinkAsButton href={`/recipes/${recipe.id}/edit`} variant="outline">
-              Edit Recipe
-            </LinkAsButton>
-            <LinkAsButton
-              href={`/recipes/${recipe.id}/variant`}
-              variant="outline">
-              Create Variant
-            </LinkAsButton>
+            {selectedVariant ? (
+              <>
+                <LinkAsButton
+                  href={`/recipes/${recipe.id}/variant/${variantId}/edit`}
+                  variant="outline">
+                  Edit Variant
+                </LinkAsButton>
+                <LinkAsButton
+                  href={`/recipes/${recipe.id}/edit`}
+                  variant="outline">
+                  Edit Recipe
+                </LinkAsButton>
+              </>
+            ) : (
+              <>
+                <LinkAsButton
+                  href={`/recipes/${recipe.id}/edit`}
+                  variant="outline">
+                  Edit Recipe
+                </LinkAsButton>
+                <LinkAsButton
+                  href={`/recipes/${recipe.id}/variant`}
+                  variant="outline">
+                  Create Variant
+                </LinkAsButton>
+              </>
+            )}
           </div>
         </div>
 
