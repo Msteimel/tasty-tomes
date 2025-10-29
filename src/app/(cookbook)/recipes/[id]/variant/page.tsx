@@ -34,13 +34,13 @@ export default function CreateVariantPage({
 
   // TODO: Replace with actual authenticated user
   const currentUser = "Current User";
-  
+
   // Use shared hooks for ingredients and instructions - initialize with parent recipe data
   const ingredientsManager = useIngredients(
-    recipe ? recipe.ingredients.map((ing) => ({ ...ing })) : undefined
+    recipe ? recipe.ingredients.map((ing) => ({ ...ing })) : undefined,
   );
   const instructionsManager = useInstructions(
-    recipe ? [...recipe.instructions] : undefined
+    recipe ? [...recipe.instructions] : undefined,
   );
 
   // Form data state - without ingredients and instructions
@@ -86,7 +86,7 @@ export default function CreateVariantPage({
         requireNotes: true, // Variants require notes
         requireIngredients: true,
         requireInstructions: true,
-      }
+      },
     );
 
     return validation.isValid;
@@ -109,7 +109,7 @@ export default function CreateVariantPage({
         requireNotes: true,
         requireIngredients: true,
         requireInstructions: true,
-      }
+      },
     );
 
     if (!validation.isValid) {

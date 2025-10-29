@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRecipeById } from "@/lib/dummyData";
 import { LinkAsButton } from "@/app/components/ui/LinkAsButton";
-import { RecipeNotes } from "@/app/components/recipe/RecipeNotes";
+import { RecipeNotesWithAdd } from "@/app/components/recipe/RecipeNotesWithAdd";
 
 export default async function RecipePage({
   params,
@@ -30,10 +30,13 @@ export default async function RecipePage({
   const displayName = selectedVariant
     ? `${recipe.recipeName} - ${selectedVariant.variantName}`
     : recipe.recipeName;
-  const displayDescription = selectedVariant?.description || recipe.recipeDescription;
+  const displayDescription =
+    selectedVariant?.description || recipe.recipeDescription;
   const displayIngredients = selectedVariant?.ingredients || recipe.ingredients;
-  const displayInstructions = selectedVariant?.instructions || recipe.instructions;
-  const displayPrepTime = selectedVariant?.preparationTime ?? recipe.preparationTime;
+  const displayInstructions =
+    selectedVariant?.instructions || recipe.instructions;
+  const displayPrepTime =
+    selectedVariant?.preparationTime ?? recipe.preparationTime;
   const displayCookTime = selectedVariant?.cookingTime ?? recipe.cookingTime;
   const displayServings = selectedVariant?.servingSize ?? recipe.servingSize;
   const displayImage = selectedVariant?.recipeImage || recipe.recipeImage;
@@ -85,7 +88,9 @@ export default async function RecipePage({
         <h1 className="text-4xl font-bold mb-2">{displayName}</h1>
         <div className="text-gray-600 mb-4">
           {recipe.originalAuthor && (
-            <p className="text-lg">Original recipe by {recipe.originalAuthor}</p>
+            <p className="text-lg">
+              Original recipe by {recipe.originalAuthor}
+            </p>
           )}
           <p className="text-sm">Digitized by {displayCreator}</p>
           {selectedVariant && (
@@ -98,7 +103,9 @@ export default async function RecipePage({
         {/* Variant Selector */}
         {hasVariants && (
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Recipe Versions:</h3>
+            <h3 className="font-semibold mb-2 text-gray-700">
+              Recipe Versions:
+            </h3>
             <div className="flex flex-wrap gap-2">
               <Link
                 href={`/recipes/${recipe.id}`}
@@ -226,34 +233,15 @@ export default async function RecipePage({
       </div>
 
       {/* Recipe Notes Section */}
-      {selectedVariant ? (
-        <div className="space-y-6 mb-8">
-          {/* Show original recipe notes if they exist */}
-          {recipe.notes && recipe.notes.length > 0 && (
-            <RecipeNotes 
-              notes={recipe.notes} 
-              title="Notes from Original Recipe"
-              subtitle="Tips from the original version"
-            />
-          )}
-          {/* Show variant-specific notes if they exist */}
-          {selectedVariant.userNotes && selectedVariant.userNotes.length > 0 && (
-            <RecipeNotes 
-              notes={selectedVariant.userNotes} 
-              title="Notes for This Variant"
-              subtitle="Tips specific to this variation"
-              variant="variant"
-            />
-          )}
-        </div>
-      ) : (
-        /* Show regular recipe notes when not viewing a variant */
-        recipe.notes && recipe.notes.length > 0 && (
-          <div className="mb-8">
-            <RecipeNotes notes={recipe.notes} />
-          </div>
-        )
-      )}
+      <div className="mb-8">
+        <RecipeNotesWithAdd
+          recipeId={recipe.id}
+          variantId={selectedVariant?.id}
+          recipeNotes={recipe.notes}
+          variantNotes={selectedVariant?.userNotes}
+          showBothOnVariant={!!selectedVariant}
+        />
+      </div>
 
       {/* Metadata */}
       <div className="mt-8 pt-6 border-t border-gray-200 text-sm text-gray-500">
