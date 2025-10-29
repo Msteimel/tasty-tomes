@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRecipeById } from "@/lib/dummyData";
 import { LinkAsButton } from "@/app/components/ui/LinkAsButton";
+import { RecipeNotes } from "@/app/components/recipe/RecipeNotes";
 
 export default async function RecipePage({
   params,
@@ -223,6 +224,36 @@ export default async function RecipePage({
           </ol>
         </div>
       </div>
+
+      {/* Recipe Notes Section */}
+      {selectedVariant ? (
+        <div className="space-y-6 mb-8">
+          {/* Show original recipe notes if they exist */}
+          {recipe.notes && recipe.notes.length > 0 && (
+            <RecipeNotes 
+              notes={recipe.notes} 
+              title="Notes from Original Recipe"
+              subtitle="Tips from the original version"
+            />
+          )}
+          {/* Show variant-specific notes if they exist */}
+          {selectedVariant.userNotes && selectedVariant.userNotes.length > 0 && (
+            <RecipeNotes 
+              notes={selectedVariant.userNotes} 
+              title="Notes for This Variant"
+              subtitle="Tips specific to this variation"
+              variant="variant"
+            />
+          )}
+        </div>
+      ) : (
+        /* Show regular recipe notes when not viewing a variant */
+        recipe.notes && recipe.notes.length > 0 && (
+          <div className="mb-8">
+            <RecipeNotes notes={recipe.notes} />
+          </div>
+        )
+      )}
 
       {/* Metadata */}
       <div className="mt-8 pt-6 border-t border-gray-200 text-sm text-gray-500">

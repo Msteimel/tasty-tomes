@@ -7,6 +7,15 @@ export interface Ingredient {
   measurement: string;
 }
 
+export interface RecipeNote {
+  id: string;
+  userId: string;
+  username: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface RecipeVariant {
   id: string;
   variantName: string;
@@ -21,6 +30,7 @@ export interface RecipeVariant {
   servingSize?: number;
   recipeImage?: string;
   notes?: string; // What makes this variant unique
+  userNotes?: RecipeNote[]; // User notes on the variant
   createdAt: Date;
   updatedAt: Date;
 }
@@ -39,6 +49,7 @@ export interface Recipe {
   ingredients: Ingredient[];
   instructions: string[];
   variants?: RecipeVariant[]; // Array of recipe variants
+  notes?: RecipeNote[]; // User notes on the recipe
   createdAt: Date;
   updatedAt: Date;
 }
