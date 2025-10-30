@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { getCookbookById, dummyRecipes } from "@/lib/dummyData";
 import { Recipe, Cookbook } from "@/lib/types";
+import { canManageRecipesInCookbook } from "@/lib/permissions";
 import { useCookbookManagement } from "@/app/components/cookbook/useCookbookManagement";
 import { CurrentRecipesPanel } from "@/app/components/cookbook/CurrentRecipesPanel";
 import { AvailableRecipesPanel } from "@/app/components/cookbook/AvailableRecipesPanel";
@@ -15,10 +16,14 @@ export default function ManageSpecificCookbookPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const [cookbookId, setCookbookId] = useState<string | null>(null);
   const [cookbook, setCookbook] = useState<Cookbook | null>(null);
   const [availableRecipes] = useState<Recipe[]>(dummyRecipes);
   const [isLoading, setIsLoading] = useState(true);
+
+  // TODO: Replace with actual authenticated user
+  const currentUserId = "Current User";
 
   // Initialize cookbook
   useEffect(() => {
@@ -67,6 +72,12 @@ export default function ManageSpecificCookbookPage({
 
   if (!cookbook) {
     return <div>Loading...</div>;
+  }
+
+  // Check permissions
+  if (!canManageRecipesInCookbook(cookbook, currentUserId)) {
+    router.push(`/cookbook/${cookbook.id}`);
+    return null;
   }
 
   return (

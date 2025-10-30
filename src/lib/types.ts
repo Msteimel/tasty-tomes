@@ -45,6 +45,7 @@ export interface Recipe {
   cuisineType: string;
   originalAuthor?: string; // Attribution to original recipe creator (e.g., "Grandma Betty", "Chef Jacques")
   createdBy: string; // User who digitized/added the recipe to the system
+  cookbookIds?: string[]; // Array of cookbook IDs this recipe belongs to
   recipeImage?: string; // URL or path to image
   ingredients: Ingredient[];
   instructions: string[];
@@ -56,7 +57,8 @@ export interface Recipe {
 
 export interface CookbookMember {
   userId: string;
-  role: 'owner' | 'editor' | 'viewer';
+  username: string; // Display name of the user
+  role: 'owner' | 'admin' | 'editor' | 'contributor' | 'viewer';
   addedAt: Date;
 }
 

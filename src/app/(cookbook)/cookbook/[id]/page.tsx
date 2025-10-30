@@ -3,6 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCookbookById } from "@/lib/dummyData";
 import { LinkAsButton } from "@/app/components/ui/LinkAsButton";
+import {
+  canEditCookbookSettings,
+  canManageMembers,
+  canManageRecipesInCookbook,
+  canCreateRecipe,
+  getRoleBadgeColor,
+  getUserRole,
+} from "@/lib/permissions";
 
 export default async function CookbookDetailPage({
   params,
@@ -15,6 +23,14 @@ export default async function CookbookDetailPage({
   if (!cookbook) {
     notFound();
   }
+
+  // TODO: Replace with actual authenticated user
+  const currentUserId = "Current User";
+  const userRole = getUserRole(cookbook, currentUserId);
+  const canEdit = canEditCookbookSettings(cookbook, currentUserId);
+  const canManage = canManageMembers(cookbook, currentUserId);
+  const canManageRecipes = canManageRecipesInCookbook(cookbook, currentUserId);
+  const canAddRecipe = canCreateRecipe(cookbook, currentUserId);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -51,17 +67,23 @@ export default async function CookbookDetailPage({
                   {cookbook.description}
                 </p>
               </div>
-              <LinkAsButton
-                href={`/cookbook/${cookbook.id}/edit`}
-                variant="outline">
-                Edit Cookbook
-              </LinkAsButton>
+              {canEdit && (
+                <LinkAsButton
+                  href={`/cookbook/${cookbook.id}/edit`}
+                  variant="outline">
+                  Edit Cookbook
+                </LinkAsButton>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
               <div>
                 <span className="font-semibold">Recipes:</span>{" "}
                 {cookbook.recipes.length}
+              </div>
+              <div>
+                <span className="font-semibold">Members:</span>{" "}
+                {cookbook.members.length}
               </div>
               <div>
                 <span className="font-semibold">Created:</span>{" "}
@@ -71,21 +93,77 @@ export default async function CookbookDetailPage({
                 <span className="font-semibold">Last Updated:</span>{" "}
                 {cookbook.updatedAt.toLocaleDateString()}
               </div>
+              {userRole && (
+                <div>
+                  <span className="font-semibold">Your Role:</span>{" "}
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium ${getRoleBadgeColor(
+                      userRole
+                    )}`}>
+                    {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+                  </span>
+                </div>
+              )}
             </div>
 
-            <div className="flex gap-3">
-              <LinkAsButton href="/recipes/create" variant="default">
-                Add New Recipe
-              </LinkAsButton>
-              <LinkAsButton
-                href={`/cookbook/${cookbook.id}/manage`}
-                variant="outline">
-                Manage Recipes
-              </LinkAsButton>
+            <div className="flex gap-3 flex-wrap">
+              {canAddRecipe && (
+                <LinkAsButton href={`/recipes/create?cookbookId=${cookbook.id}`} variant="default">
+                  Add New Recipe
+                </LinkAsButton>
+              )}
+              {canManageRecipes && (
+                <LinkAsButton
+                  href={`/cookbook/${cookbook.id}/manage`}
+                  variant="outline">
+                  Manage Recipes
+                </LinkAsButton>
+              )}
+              {canManage && (
+                <LinkAsButton
+                  href={`/cookbook/${cookbook.id}/members`}
+                  variant="outline">
+                  Manage Members
+                </LinkAsButton>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Members Section */}
+      {cookbook.members.length > 0 && (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">
+              Members ({cookbook.members.length})
+            </h2>
+            {canManage && (
+              <LinkAsButton
+                href={`/cookbook/${cookbook.id}/members`}
+                variant="outline"
+                className="text-sm">
+                Manage Members
+              </LinkAsButton>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {cookbook.members.map((member) => (
+              <div
+                key={member.userId}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg border">
+                <span className="font-medium text-sm">{member.userId}</span>
+                <span
+                  className={`px-2 py-1 rounded text-xs font-medium ${getRoleBadgeColor(
+                    member.role
+                  )}`}>
+                  {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recipes Grid */}
       <div>

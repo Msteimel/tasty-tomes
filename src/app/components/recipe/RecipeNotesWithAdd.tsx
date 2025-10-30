@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { RecipeNote } from "@/lib/types";
+import { RecipeNote, Cookbook } from "@/lib/types";
 import { RecipeNotes } from "@/app/components/recipe/RecipeNotes";
 import { AddNoteForm } from "@/app/components/recipe/AddNoteForm";
 import { Button } from "@/app/components/ui/button";
+import { canAddNotes } from "@/lib/permissions";
 
 interface RecipeNotesWithAddProps {
   recipeId: string;
@@ -12,6 +13,8 @@ interface RecipeNotesWithAddProps {
   recipeNotes?: RecipeNote[];
   variantNotes?: RecipeNote[];
   showBothOnVariant?: boolean;
+  cookbook?: Cookbook; // Optional: if recipe is viewed within a cookbook context
+  currentUserId?: string; // Current user's ID for permission checks
 }
 
 export function RecipeNotesWithAdd({
@@ -20,8 +23,15 @@ export function RecipeNotesWithAdd({
   recipeNotes,
   variantNotes,
   showBothOnVariant = false,
+  cookbook,
+  currentUserId,
 }: RecipeNotesWithAddProps) {
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Check if current user can add notes
+  const userCanAddNotes = cookbook && currentUserId 
+    ? canAddNotes(cookbook, currentUserId)
+    : false;
 
   const handleNoteAdded = (note: RecipeNote) => {
     // In a real app, this would refresh the data or update state
@@ -37,8 +47,8 @@ export function RecipeNotesWithAdd({
 
   return (
     <div className="space-y-6">
-      {/* Add Note Button */}
-      {!showAddForm && (
+      {/* Add Note Button - only show if user has permission */}
+      {!showAddForm && userCanAddNotes && (
         <div className="flex justify-end">
           <Button
             onClick={() => setShowAddForm(true)}
@@ -70,6 +80,8 @@ export function RecipeNotesWithAdd({
           variantId={variantId}
           onNoteAdded={handleNoteAdded}
           onCancel={handleCancel}
+          currentUserId={currentUserId}
+          currentUsername={cookbook?.members.find(m => m.userId === currentUserId)?.username}
         />
       )}
 

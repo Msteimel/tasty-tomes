@@ -16,6 +16,7 @@ import {
 } from "@/app/components/ui/select";
 import { getCookbookById } from "@/lib/dummyData";
 import { Cookbook, CookbookMember } from "@/lib/types";
+import { canEditCookbookSettings, canDeleteCookbook } from "@/lib/permissions";
 
 // Form data type for editing - omits auto-generated and complex fields
 type CookbookFormData = Omit<
@@ -70,13 +71,13 @@ export default function EditCookbookPage({
   // Check if current user is owner/admin
   // TODO: Replace with actual auth check
   const currentUserId = "Current User";
-  const currentUserMember = cookbook.members.find(
-    (m) => m.userId === currentUserId,
-  );
-  const isOwner = currentUserMember?.role === "owner";
+  
+  // Check permissions
+  const canEdit = canEditCookbookSettings(cookbook, currentUserId);
+  const canDelete = canDeleteCookbook(cookbook, currentUserId);
 
-  if (!isOwner) {
-    // Non-owners can't edit
+  if (!canEdit) {
+    // Non-owners/admins can't edit
     router.push(`/cookbook/${id}`);
     return null;
   }
@@ -133,6 +134,7 @@ export default function EditCookbookPage({
     // TODO: Replace with actual user lookup by email
     const newMember: CookbookMember = {
       userId: newMemberEmail, // In real app, this would be the user's ID
+      username: newMemberEmail, // In real app, this would be the user's display name
       role: newMemberRole,
       addedAt: new Date(),
     };
@@ -168,6 +170,41 @@ export default function EditCookbookPage({
       newSet.add(recipeId);
     }
     setRecipesToRemove(newSet);
+  };
+
+  const handleDeleteCookbook = () => {
+    if (
+      !confirm(
+        `Are you sure you want to DELETE "${cookbook.name}"?\n\nThis will permanently delete the cookbook and cannot be undone.\n\nRecipes will not be deleted, but they will be removed from this cookbook.`
+      )
+    ) {
+      return;
+    }
+
+    // Double confirmation for safety
+    if (
+      !confirm(
+        "This is your last chance. Type YES in the next prompt to confirm deletion."
+      )
+    ) {
+      return;
+    }
+
+    const userConfirmation = prompt(
+      'Type "DELETE" in all caps to confirm permanent deletion:'
+    );
+
+    if (userConfirmation !== "DELETE") {
+      alert("Deletion cancelled. The cookbook was not deleted.");
+      return;
+    }
+
+    // TODO: Delete from database
+    console.log("Deleting cookbook:", cookbook.id);
+
+    // Redirect to cookbook list
+    router.push("/cookbook");
+    alert(`"${cookbook.name}" has been permanently deleted.`);
   };
 
   return (
@@ -481,6 +518,42 @@ export default function EditCookbookPage({
           </Button>
         </div>
       </form>
+
+      {/* Danger Zone - Delete Cookbook (Owners Only) */}
+      {canDelete && (
+        <div className="mt-8 pt-8 border-t-2 border-red-200">
+          <div className="border-2 border-red-300 rounded-lg p-6 bg-red-50">
+            <h2 className="text-2xl font-bold text-red-900 mb-2">
+              Danger Zone
+            </h2>
+            <p className="text-red-800 mb-4">
+              Once you delete a cookbook, there is no going back. Please be
+              certain.
+            </p>
+            <div className="bg-white border border-red-300 rounded p-4 mb-4">
+              <h3 className="font-semibold text-red-900 mb-2">
+                What happens when you delete this cookbook:
+              </h3>
+              <ul className="text-sm text-red-800 space-y-1 list-disc list-inside">
+                <li>The cookbook and all its settings will be permanently deleted</li>
+                <li>All member associations will be removed</li>
+                <li>Recipes will remain in the system but will be removed from this cookbook</li>
+                <li>This action cannot be undone</li>
+              </ul>
+            </div>
+            <Button
+              type="button"
+              onClick={handleDeleteCookbook}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold"
+            >
+              Delete This Cookbook Permanently
+            </Button>
+            <p className="text-xs text-red-700 mt-2 text-center italic">
+              Only cookbook owners can delete cookbooks
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -17,6 +17,7 @@ import {
 import { Textarea } from "@/app/components/ui/textarea";
 import { getRecipeById } from "@/lib/dummyData";
 import { Recipe } from "@/lib/types";
+import { canEditRecipe } from "@/lib/permissions";
 import {
   useIngredients,
   useInstructions,
@@ -72,9 +73,10 @@ export default function EditRecipePage({
 
   // TODO: Check if current user has permission to edit (creator or cookbook owner)
   const currentUser = "Current User";
-  const canEdit = recipe.createdBy === currentUser;
-
-  if (!canEdit) {
+  
+  // TODO: Get cookbook context if recipe is in a cookbook
+  // For now, we just check if user is the creator
+  if (!canEditRecipe(recipe, currentUser)) {
     router.push(`/recipes/${id}`);
     return null;
   }

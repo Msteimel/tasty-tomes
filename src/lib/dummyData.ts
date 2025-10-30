@@ -13,6 +13,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "italian",
     originalAuthor: "Nonna Maria",
     createdBy: "Current User",
+    cookbookIds: ["1", "2"], // In Family Favorites and International Cuisine
     recipeImage:
       "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
     ingredients: [
@@ -76,6 +77,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "american",
     originalAuthor: "Grandma Betty",
     createdBy: "Current User",
+    cookbookIds: ["1"], // In Family Favorites
     recipeImage:
       "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=800",
     ingredients: [
@@ -366,6 +368,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "thai",
     originalAuthor: "Chef Somchai",
     createdBy: "Current User",
+    cookbookIds: ["2", "4"], // In International Cuisine and Quick Weeknight Dinners
     recipeImage:
       "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800",
     ingredients: [
@@ -449,6 +452,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "french",
     originalAuthor: "Chef Pierre",
     createdBy: "Current User",
+    cookbookIds: ["2", "3"], // In International Cuisine and Comfort Food Classics
     recipeImage:
       "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800",
     ingredients: [
@@ -557,6 +561,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "indian",
     originalAuthor: "Chef Rajesh",
     createdBy: "Current User",
+    cookbookIds: ["2"], // In International Cuisine
     recipeImage:
       "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800",
     ingredients: [
@@ -647,6 +652,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "american",
     originalAuthor: "Aunt Carol",
     createdBy: "Sarah Johnson",
+    cookbookIds: ["1", "3"], // In Family Favorites and Comfort Food Classics
     recipeImage:
       "https://images.unsplash.com/photo-1559561853-08451507cbe7?w=800",
     ingredients: [
@@ -740,6 +746,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "korean",
     originalAuthor: "Chef Min-ji",
     createdBy: "Sarah Johnson",
+    cookbookIds: ["2", "4"], // In International Cuisine and Quick Weeknight Dinners
     recipeImage:
       "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800",
     ingredients: [
@@ -835,6 +842,7 @@ export const dummyRecipes: Recipe[] = [
     cuisineType: "american",
     originalAuthor: "Mom's Recipe Box",
     createdBy: "Sarah Johnson",
+    cookbookIds: ["1"], // In Family Favorites
     recipeImage:
       "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800",
     ingredients: [
@@ -935,7 +943,7 @@ export const dummyCookbooks: Cookbook[] = [
     ], // Carbonara, Cookies, Mac and Cheese, Lemon Bars
     createdBy: "Current User",
     members: [
-      { userId: "Current User", role: "owner", addedAt: new Date("2024-01-01") },
+      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-01-01") },
     ],
     isPublic: false,
     isCollaborative: false,
@@ -959,8 +967,8 @@ export const dummyCookbooks: Cookbook[] = [
     ], // Italian, Thai, French, Indian, Korean
     createdBy: "Current User",
     members: [
-      { userId: "Current User", role: "owner", addedAt: new Date("2024-02-01") },
-      { userId: "Sarah Johnson", role: "editor", addedAt: new Date("2024-03-15") },
+      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-02-01") },
+      { userId: "Sarah Johnson", username: "Sarah Johnson", role: "editor", addedAt: new Date("2024-03-15") },
     ],
     isPublic: true,
     isCollaborative: true,
@@ -978,7 +986,7 @@ export const dummyCookbooks: Cookbook[] = [
     recipes: [dummyRecipes[0], dummyRecipes[3], dummyRecipes[5]], // Carbonara, French Onion Soup, Mac and Cheese
     createdBy: "Current User",
     members: [
-      { userId: "Current User", role: "owner", addedAt: new Date("2024-03-01") },
+      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-03-01") },
     ],
     isPublic: false,
     isCollaborative: false,
@@ -996,7 +1004,7 @@ export const dummyCookbooks: Cookbook[] = [
     recipes: [dummyRecipes[2], dummyRecipes[6]], // Thai Green Curry, Korean Beef Bulgogi
     createdBy: "Current User",
     members: [
-      { userId: "Current User", role: "owner", addedAt: new Date("2024-04-15") },
+      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-04-15") },
     ],
     isPublic: false,
     isCollaborative: false,

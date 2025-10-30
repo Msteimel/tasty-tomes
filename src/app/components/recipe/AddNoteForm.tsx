@@ -8,19 +8,26 @@ import { RecipeNote } from "@/lib/types";
 interface AddNoteFormProps {
   recipeId: string;
   variantId?: string;
-  onNoteAdded?: (note: RecipeNote) => void;
-  onCancel?: () => void;
+  onNoteAdded: (note: RecipeNote) => void;
+  onCancel: () => void;
+  currentUserId?: string; // Optional: current user's ID
+  currentUsername?: string; // Optional: current user's username
 }
 
-export function AddNoteForm({ recipeId, variantId, onNoteAdded, onCancel }: AddNoteFormProps) {
+export function AddNoteForm({ 
+  recipeId, 
+  variantId, 
+  onNoteAdded, 
+  onCancel,
+  currentUserId,
+  currentUsername 
+}: AddNoteFormProps) {
   const [noteContent, setNoteContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // TODO: Replace with actual authenticated user
-  const currentUser = {
-    id: "current-user",
-    name: "Current User",
-  };
+  // Use provided user info or fall back to placeholder
+  const userId = currentUserId || "current-user";
+  const username = currentUsername || "Current User";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +43,8 @@ export function AddNoteForm({ recipeId, variantId, onNoteAdded, onCancel }: AddN
       const now = new Date();
       const newNote: RecipeNote = {
         id: `note-${Date.now()}`,
-        userId: currentUser.id,
-        username: currentUser.name,
+        userId: userId,
+        username: username,
         content: noteContent.trim(),
         createdAt: now,
         updatedAt: now,
@@ -109,7 +116,7 @@ export function AddNoteForm({ recipeId, variantId, onNoteAdded, onCancel }: AddN
               required
             />
             <p className="text-xs text-gray-500 mt-2">
-              Posting as: <strong>{currentUser.name}</strong>
+              Posting as: <strong>{username}</strong>
             </p>
           </div>
 

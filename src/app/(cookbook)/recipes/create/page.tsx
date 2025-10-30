@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import {
@@ -24,18 +24,27 @@ import {
   IngredientsList,
   InstructionsList,
 } from "@/app/components/recipe/RecipeFormComponents";
+import { getCookbookById } from "@/lib/dummyData";
 
 // Form data type - omits auto-generated fields and handles File for image
 type RecipeFormData = Omit<
   Recipe,
-  "id" | "createdAt" | "updatedAt" | "createdBy" | "recipeImage"
+  "id" | "createdAt" | "updatedAt" | "createdBy" | "recipeImage" | "cookbookIds"
 > & {
   recipeImage?: File;
+  cookbookIds?: string[];
 };
 
 export default function CreateRecipePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get cookbookId from URL parameters
+  const cookbookIdFromUrl = searchParams.get("cookbookId");
+  
+  // Get cookbook details if creating from a cookbook
+  const cookbook = cookbookIdFromUrl ? getCookbookById(cookbookIdFromUrl) : null;
 
   // TODO: Replace with actual authenticated user
   const currentUser = "Current User";
@@ -55,6 +64,7 @@ export default function CreateRecipePage() {
     servingSize: 0,
     cuisineType: "",
     originalAuthor: "", // Optional - for attributing the original recipe creator
+    cookbookIds: cookbookIdFromUrl ? [cookbookIdFromUrl] : undefined, // Set cookbook context if provided
   });
 
   // Handle form field changes
@@ -136,6 +146,7 @@ export default function CreateRecipePage() {
         cuisineType: formData.cuisineType,
         originalAuthor: formData.originalAuthor || undefined, // Optional attribution
         createdBy: currentUser, // Auto-set to current user
+        cookbookIds: formData.cookbookIds, // Include cookbook associations if provided
         recipeImage: recipeImageUrl,
         ingredients: ingredientsManager.getValidIngredients(),
         instructions: instructionsManager.getValidInstructions(),
@@ -163,6 +174,13 @@ export default function CreateRecipePage() {
   return (
     <div>
       <div>Create Recipe Page</div>
+      {cookbook && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-800">
+            ℹ️ This recipe will be associated with <strong>&quot;{cookbook.name}&quot;</strong>
+          </p>
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <fieldset>
           <label>
