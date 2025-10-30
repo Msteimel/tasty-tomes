@@ -76,9 +76,14 @@ export default function ProfilePage() {
       <div className="mb-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">My Cookbooks</h2>
-          <LinkAsButton href="/cookbook/create" variant="outline">
-            Create New Cookbook
-          </LinkAsButton>
+          <div className="flex gap-3">
+            <LinkAsButton href="/profile/manage-cookbooks" variant="outline">
+              Manage All Cookbooks
+            </LinkAsButton>
+            <LinkAsButton href="/cookbook/create" variant="default">
+              Create New Cookbook
+            </LinkAsButton>
+          </div>
         </div>
 
         {userCookbooks.length > 0 ? (

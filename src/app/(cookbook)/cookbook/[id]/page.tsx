@@ -78,7 +78,7 @@ export default async function CookbookDetailPage({
                 Add New Recipe
               </LinkAsButton>
               <LinkAsButton
-                href={`/cookbook/${cookbook.id}/manage-recipes`}
+                href={`/cookbook/${cookbook.id}/manage`}
                 variant="outline">
                 Manage Recipes
               </LinkAsButton>
