@@ -1,9 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getRecipeById } from "@/lib/dummyData";
+import { getRecipeById, getCookbookById } from "@/lib/dummyData";
 import { LinkAsButton } from "@/app/components/ui/LinkAsButton";
 import { RecipeNotesWithAdd } from "@/app/components/recipe/RecipeNotesWithAdd";
+import { getDevUserId } from "@/lib/devAuth";
+import {
+  canEditRecipe,
+  canCreateVariant,
+  canEditVariant,
+  canDeleteRecipe,
+} from "@/lib/permissions";
 
 export default async function RecipePage({
   params,
@@ -19,6 +26,15 @@ export default async function RecipePage({
   if (!recipe) {
     notFound();
   }
+
+  // Get current user from dev auth (will be real auth in production)
+  const currentUser = await getDevUserId();
+
+  // Get cookbook context for permissions
+  const cookbook =
+    recipe.cookbookIds && recipe.cookbookIds.length > 0
+      ? getCookbookById(recipe.cookbookIds[0])
+      : undefined;
 
   // Determine which version to display (original or variant)
   const hasVariants = recipe.variants && recipe.variants.length > 0;
@@ -44,6 +60,14 @@ export default async function RecipePage({
 
   const totalTime = displayPrepTime + displayCookTime;
 
+  // Permission checks
+  const userCanEditRecipe = canEditRecipe(recipe, currentUser, cookbook);
+  const userCanCreateVariant = canCreateVariant(recipe, currentUser, cookbook);
+  const userCanEditVariant = selectedVariant
+    ? canEditVariant(selectedVariant.createdBy, currentUser, cookbook)
+    : false;
+  const userCanDeleteRecipe = canDeleteRecipe(recipe, currentUser, cookbook);
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* Header Section */}
@@ -57,29 +81,53 @@ export default async function RecipePage({
           <div className="flex gap-2">
             {selectedVariant ? (
               <>
-                <LinkAsButton
-                  href={`/recipes/${recipe.id}/variant/${variantId}/edit`}
-                  variant="outline">
-                  Edit Variant
-                </LinkAsButton>
-                <LinkAsButton
-                  href={`/recipes/${recipe.id}/edit`}
-                  variant="outline">
-                  Edit Recipe
-                </LinkAsButton>
+                {userCanEditVariant && (
+                  <LinkAsButton
+                    href={`/recipes/${recipe.id}/variant/${variantId}/edit`}
+                    variant="outline">
+                    Edit Variant
+                  </LinkAsButton>
+                )}
+                {userCanEditRecipe && (
+                  <LinkAsButton
+                    href={`/recipes/${recipe.id}/edit`}
+                    variant="outline">
+                    Edit Recipe
+                  </LinkAsButton>
+                )}
+                {userCanDeleteRecipe && (
+                  <LinkAsButton
+                    href={`/recipes/${recipe.id}/delete`}
+                    variant="outline"
+                    className="text-red-600 hover:text-red-800 border-red-300 hover:border-red-500">
+                    Delete Recipe
+                  </LinkAsButton>
+                )}
               </>
             ) : (
               <>
-                <LinkAsButton
-                  href={`/recipes/${recipe.id}/edit`}
-                  variant="outline">
-                  Edit Recipe
-                </LinkAsButton>
-                <LinkAsButton
-                  href={`/recipes/${recipe.id}/variant`}
-                  variant="outline">
-                  Create Variant
-                </LinkAsButton>
+                {userCanEditRecipe && (
+                  <LinkAsButton
+                    href={`/recipes/${recipe.id}/edit`}
+                    variant="outline">
+                    Edit Recipe
+                  </LinkAsButton>
+                )}
+                {userCanCreateVariant && (
+                  <LinkAsButton
+                    href={`/recipes/${recipe.id}/variant`}
+                    variant="outline">
+                    Create Variant
+                  </LinkAsButton>
+                )}
+                {userCanDeleteRecipe && (
+                  <LinkAsButton
+                    href={`/recipes/${recipe.id}/delete`}
+                    variant="outline"
+                    className="text-red-600 hover:text-red-800 border-red-300 hover:border-red-500">
+                    Delete Recipe
+                  </LinkAsButton>
+                )}
               </>
             )}
           </div>
@@ -240,6 +288,8 @@ export default async function RecipePage({
           recipeNotes={recipe.notes}
           variantNotes={selectedVariant?.userNotes}
           showBothOnVariant={!!selectedVariant}
+          cookbook={cookbook}
+          currentUserId={currentUser}
         />
       </div>
 

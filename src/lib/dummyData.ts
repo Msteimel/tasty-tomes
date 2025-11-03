@@ -12,7 +12,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 4,
     cuisineType: "italian",
     originalAuthor: "Nonna Maria",
-    createdBy: "Current User",
+    createdBy: "user-001",
     cookbookIds: ["1", "2"], // In Family Favorites and International Cuisine
     recipeImage:
       "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
@@ -76,7 +76,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 24,
     cuisineType: "american",
     originalAuthor: "Grandma Betty",
-    createdBy: "Current User",
+    createdBy: "user-001",
     cookbookIds: ["1"], // In Family Favorites
     recipeImage:
       "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=800",
@@ -166,7 +166,7 @@ export const dummyRecipes: Recipe[] = [
       },
       {
         id: "note-2-3",
-        userId: "current-user",
+        userId: "user-001",
         username: "Current User",
         content: "Chilling the dough for 30 minutes before baking prevents the cookies from spreading too much and makes them extra thick!",
         createdAt: new Date("2024-10-01"),
@@ -179,7 +179,7 @@ export const dummyRecipes: Recipe[] = [
         variantName: "Double Chocolate Cookies",
         description: "Extra chocolatey version with cocoa powder and dark chocolate chunks.",
         parentRecipeId: "2",
-        createdBy: "Current User",
+        createdBy: "user-001",
         ingredients: [
           {
             name: "All-purpose flour",
@@ -254,7 +254,7 @@ export const dummyRecipes: Recipe[] = [
           },
           {
             id: "note-variant-2-1-2",
-            userId: "current-user",
+            userId: "user-001",
             username: "Current User",
             content: "Dutch-processed cocoa gives a deeper, darker color and flavor than natural cocoa powder.",
             createdAt: new Date("2024-07-12"),
@@ -269,7 +269,7 @@ export const dummyRecipes: Recipe[] = [
         variantName: "Oatmeal Chocolate Chip Cookies",
         description: "Heartier version with rolled oats for extra texture.",
         parentRecipeId: "2",
-        createdBy: "Sarah Johnson",
+        createdBy: "user-002",
         ingredients: [
           {
             name: "All-purpose flour",
@@ -367,7 +367,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 4,
     cuisineType: "thai",
     originalAuthor: "Chef Somchai",
-    createdBy: "Current User",
+    createdBy: "user-001",
     cookbookIds: ["2", "4"], // In International Cuisine and Quick Weeknight Dinners
     recipeImage:
       "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800",
@@ -451,7 +451,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 6,
     cuisineType: "french",
     originalAuthor: "Chef Pierre",
-    createdBy: "Current User",
+    createdBy: "user-001",
     cookbookIds: ["2", "3"], // In International Cuisine and Comfort Food Classics
     recipeImage:
       "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800",
@@ -532,7 +532,7 @@ export const dummyRecipes: Recipe[] = [
     notes: [
       {
         id: "note-4-1",
-        userId: "current-user",
+        userId: "user-001",
         username: "Current User",
         content: "Don't rush the onion caramelization! Low and slow is the key. I add a pinch of sugar halfway through to help with browning.",
         createdAt: new Date("2024-09-20"),
@@ -560,7 +560,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 6,
     cuisineType: "indian",
     originalAuthor: "Chef Rajesh",
-    createdBy: "Current User",
+    createdBy: "user-001",
     cookbookIds: ["2"], // In International Cuisine
     recipeImage:
       "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800",
@@ -651,7 +651,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 8,
     cuisineType: "american",
     originalAuthor: "Aunt Carol",
-    createdBy: "Sarah Johnson",
+    createdBy: "user-002",
     cookbookIds: ["1", "3"], // In Family Favorites and Comfort Food Classics
     recipeImage:
       "https://images.unsplash.com/photo-1559561853-08451507cbe7?w=800",
@@ -745,7 +745,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 4,
     cuisineType: "korean",
     originalAuthor: "Chef Min-ji",
-    createdBy: "Sarah Johnson",
+    createdBy: "user-002",
     cookbookIds: ["2", "4"], // In International Cuisine and Quick Weeknight Dinners
     recipeImage:
       "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800",
@@ -841,7 +841,7 @@ export const dummyRecipes: Recipe[] = [
     servingSize: 16,
     cuisineType: "american",
     originalAuthor: "Mom's Recipe Box",
-    createdBy: "Sarah Johnson",
+    createdBy: "user-002",
     cookbookIds: ["1"], // In Family Favorites
     recipeImage:
       "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800",
@@ -941,9 +941,9 @@ export const dummyCookbooks: Cookbook[] = [
       dummyRecipes[5],
       dummyRecipes[7],
     ], // Carbonara, Cookies, Mac and Cheese, Lemon Bars
-    createdBy: "Current User",
+    createdBy: "user-001",
     members: [
-      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-01-01") },
+      { userId: "user-001", username: "Current User", role: "owner", addedAt: new Date("2024-01-01") },
     ],
     isPublic: false,
     isCollaborative: false,
@@ -965,10 +965,10 @@ export const dummyCookbooks: Cookbook[] = [
       dummyRecipes[4],
       dummyRecipes[6],
     ], // Italian, Thai, French, Indian, Korean
-    createdBy: "Current User",
+    createdBy: "user-001",
     members: [
-      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-02-01") },
-      { userId: "Sarah Johnson", username: "Sarah Johnson", role: "editor", addedAt: new Date("2024-03-15") },
+      { userId: "user-001", username: "Current User", role: "owner", addedAt: new Date("2024-02-01") },
+      { userId: "user-002", username: "Sarah Johnson", role: "editor", addedAt: new Date("2024-03-15") },
     ],
     isPublic: true,
     isCollaborative: true,
@@ -984,9 +984,9 @@ export const dummyCookbooks: Cookbook[] = [
     coverImage:
       "https://images.unsplash.com/photo-1547592180-85f173990554?w=800",
     recipes: [dummyRecipes[0], dummyRecipes[3], dummyRecipes[5]], // Carbonara, French Onion Soup, Mac and Cheese
-    createdBy: "Current User",
+    createdBy: "user-001",
     members: [
-      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-03-01") },
+      { userId: "user-001", username: "Current User", role: "owner", addedAt: new Date("2024-03-01") },
     ],
     isPublic: false,
     isCollaborative: false,
@@ -1002,9 +1002,9 @@ export const dummyCookbooks: Cookbook[] = [
     coverImage:
       "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
     recipes: [dummyRecipes[2], dummyRecipes[6]], // Thai Green Curry, Korean Beef Bulgogi
-    createdBy: "Current User",
+    createdBy: "user-001",
     members: [
-      { userId: "Current User", username: "Current User", role: "owner", addedAt: new Date("2024-04-15") },
+      { userId: "user-001", username: "Current User", role: "owner", addedAt: new Date("2024-04-15") },
     ],
     isPublic: false,
     isCollaborative: false,

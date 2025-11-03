@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
@@ -18,6 +18,7 @@ import { Textarea } from "@/app/components/ui/textarea";
 import { getRecipeById } from "@/lib/dummyData";
 import { Recipe } from "@/lib/types";
 import { canEditRecipe } from "@/lib/permissions";
+import { useDevUser } from "@/app/components/dev/RoleSwitcher";
 import {
   useIngredients,
   useInstructions,
@@ -47,11 +48,11 @@ export default function EditRecipePage({
 
   // Initialize state before conditional returns
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Use shared hooks for ingredients and instructions
   const ingredientsManager = useIngredients(recipe?.ingredients);
   const instructionsManager = useInstructions(recipe?.instructions);
-  
+
   const [formData, setFormData] = useState<
     Omit<RecipeFormData, "ingredients" | "instructions">
   >({
@@ -65,20 +66,32 @@ export default function EditRecipePage({
     recipeImageUrl: recipe?.recipeImage,
   });
 
-  // Redirect if recipe not found
-  if (!recipe) {
-    router.push("/cookbook");
-    return null;
-  }
+  // Get current user from dev auth
+  const currentUser = useDevUser();
 
-  // TODO: Check if current user has permission to edit (creator or cookbook owner)
-  const currentUser = "Current User";
-  
-  // TODO: Get cookbook context if recipe is in a cookbook
-  // For now, we just check if user is the creator
-  if (!canEditRecipe(recipe, currentUser)) {
-    router.push(`/recipes/${id}`);
-    return null;
+  // Redirect if recipe not found or user doesn't have permission
+  useEffect(() => {
+    if (!recipe) {
+      router.push("/cookbook");
+      return;
+    }
+
+    // TODO: Get cookbook context if recipe is in a cookbook
+    // For now, we just check if user is the creator
+    if (!canEditRecipe(recipe, currentUser)) {
+      router.push(`/recipes/${id}`);
+    }
+  }, [recipe, currentUser, id, router]);
+
+  // Show loading state while checking permissions
+  if (!recipe || !canEditRecipe(recipe, currentUser)) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="text-center">
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   // Handle form field changes
@@ -105,7 +118,7 @@ export default function EditRecipePage({
         requireNotes: false,
         requireIngredients: true,
         requireInstructions: true,
-      }
+      },
     );
 
     return validation.isValid;
@@ -127,7 +140,7 @@ export default function EditRecipePage({
         requireNotes: false,
         requireIngredients: true,
         requireInstructions: true,
-      }
+      },
     );
 
     if (!validation.isValid) {

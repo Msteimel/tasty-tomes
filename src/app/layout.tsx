@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/app/components/layout/header";
 import Footer from "@/app/components/layout/footer";
+import { RoleSwitcher } from "@/app/components/dev/RoleSwitcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <RoleSwitcher />
       </body>
     </html>
   );

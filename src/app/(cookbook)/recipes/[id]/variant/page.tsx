@@ -6,7 +6,8 @@ import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import { RecipeVariant } from "@/lib/types";
-import { getRecipeById } from "@/lib/dummyData";
+import { getRecipeById, getCookbookById } from "@/lib/dummyData";
+import { canCreateVariant } from "@/lib/permissions";
 import {
   useIngredients,
   useInstructions,
@@ -35,6 +36,16 @@ export default function CreateVariantPage({
   // TODO: Replace with actual authenticated user
   const currentUser = "Current User";
 
+  // Get cookbook context for permission checks
+  const cookbook = recipe?.cookbookIds?.[0] 
+    ? getCookbookById(recipe.cookbookIds[0]) 
+    : null;
+
+  // Check if user has permission to create variant
+  const userCanCreateVariant = recipe
+    ? canCreateVariant(recipe, currentUser, cookbook || undefined)
+    : false;
+
   // Use shared hooks for ingredients and instructions - initialize with parent recipe data
   const ingredientsManager = useIngredients(
     recipe ? recipe.ingredients.map((ing) => ({ ...ing })) : undefined,
@@ -60,6 +71,33 @@ export default function CreateVariantPage({
         <Link href="/cookbook" className="text-blue-600 hover:text-blue-800">
           ← Back to Cookbook
         </Link>
+      </div>
+    );
+  }
+
+  // Check permission to create variant
+  if (!userCanCreateVariant) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-3xl font-bold mb-4">Permission Denied</h1>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+            <p className="text-red-800 mb-4">
+              You don&apos;t have permission to create variants for this recipe.
+            </p>
+            <p className="text-sm text-red-600">
+              {cookbook 
+                ? "Only owners, admins, and editors in collaborative cookbooks can create variants."
+                : "Only the recipe creator can create variants of recipes without cookbook association."
+              }
+            </p>
+          </div>
+          <Link 
+            href={`/recipes/${recipe.id}`}
+            className="text-blue-600 hover:text-blue-800">
+            ← Back to Recipe
+          </Link>
+        </div>
       </div>
     );
   }

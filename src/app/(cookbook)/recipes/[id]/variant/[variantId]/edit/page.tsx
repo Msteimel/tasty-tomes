@@ -6,8 +6,9 @@ import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
-import { getRecipeById, getVariantById } from "@/lib/dummyData";
+import { getRecipeById, getVariantById, getCookbookById } from "@/lib/dummyData";
 import { RecipeVariant } from "@/lib/types";
+import { canEditVariant } from "@/lib/permissions";
 import {
   useIngredients,
   useInstructions,
@@ -59,13 +60,40 @@ export default function EditVariantPage({
     return null;
   }
 
-  // TODO: Check if current user has permission to edit (variant creator or recipe owner)
+  // Check permission to edit variant
   const currentUser = "Current User";
-  const canEdit = variant.createdBy === currentUser;
+  
+  // Get cookbook context for permission checks
+  const cookbook = recipe.cookbookIds?.[0] 
+    ? getCookbookById(recipe.cookbookIds[0]) 
+    : null;
+  
+  const userCanEdit = canEditVariant(variant.createdBy, currentUser, cookbook || undefined);
 
-  if (!canEdit) {
-    router.push(`/recipes/${id}?variant=${variantId}`);
-    return null;
+  if (!userCanEdit) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-3xl font-bold mb-4">Permission Denied</h1>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+            <p className="text-red-800 mb-4">
+              You don&apos;t have permission to edit this variant.
+            </p>
+            <p className="text-sm text-red-600">
+              {cookbook
+                ? "Only the variant creator, recipe creator, cookbook owners, and admins can edit variants."
+                : "Only the variant creator or recipe creator can edit this variant."
+              }
+            </p>
+          </div>
+          <Link 
+            href={`/recipes/${id}?variant=${variantId}`}
+            className="text-blue-600 hover:text-blue-800">
+            ← Back to Variant
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   // Handle form field changes

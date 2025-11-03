@@ -127,23 +127,27 @@ This document outlines the role-based permission system for the Tasty Tomes cook
    - [x] Hide or disable delete functionality for admins
    - **Implementation**: Added "Danger Zone" section with triple confirmation (confirm dialog, second confirm, type "DELETE" prompt)
 
-2. **Recipe Creation Context**
-   - [ ] Pass cookbook ID when creating recipes from a cookbook
-   - [ ] Store cookbook association with recipes (add `cookbookId` field to Recipe type)
-   - [ ] Update recipe creation flow to respect cookbook permissions
-   - [ ] Disable "Add New Recipe" for non-members or viewers/contributors
+2. **Recipe Creation Context** ✅ COMPLETE (See Phase 3 below)
+   - [x] Pass cookbook ID when creating recipes from a cookbook
+   - [x] Store cookbook association with recipes (added `cookbookIds` array field to Recipe type)
+   - [x] Update recipe creation flow to respect cookbook permissions
+   - [x] "Add New Recipe" button only shown to users with `canCreateRecipe` permission (owners, admins, editors in collaborative)
+   - **Implementation**: Completed in Phase 3 with array-based cookbook associations
 
-3. **Note System for Contributors**
-   - [ ] Update recipe detail page to show "Add Note" button for contributors and above
-   - [ ] Use `canAddNotes()` permission check
-   - [ ] Allow contributors to add/edit/delete their own notes
-   - [ ] Show note author with each note
+3. **Note System for Contributors** ✅ COMPLETE (See Phase 2 below)
+   - [x] Update recipe detail page to show "Add Note" button for contributors and above
+   - [x] Use `canAddNotes()` permission check
+   - [x] Allow contributors to add/edit/delete their own notes
+   - [x] Show note author with each note
+   - **Implementation**: Completed in Phase 2 with permission-based note controls
 
-4. **Variant Permission Checks**
-   - [ ] Update variant creation page (`/src/app/(cookbook)/recipes/[id]/variant/page.tsx`)
-   - [ ] Update variant edit page (`/src/app/(cookbook)/recipes/[id]/variant/[variantId]/edit/page.tsx`)
-   - [ ] Add permission checks using the variant utility functions
-   - [ ] Conditional rendering for variant creation buttons
+4. **Variant Permission Checks** ✅ COMPLETE (See Phase 5 below)
+   - [x] Update variant creation page (`/src/app/(cookbook)/recipes/[id]/variant/page.tsx`)
+   - [x] Update variant edit page (`/src/app/(cookbook)/recipes/[id]/variant/[variantId]/edit/page.tsx`)
+   - [x] Update recipe detail page (`/src/app/(cookbook)/recipes/[id]/page.tsx`)
+   - [x] Add permission checks using the variant utility functions
+   - [x] Conditional rendering for variant creation buttons
+   - **Implementation**: Completed in Phase 5 with permission checks on all variant pages
 
 5. **Recipe View Page Permissions**
    - [ ] Update `/src/app/(cookbook)/recipes/[id]/page.tsx`
@@ -237,14 +241,29 @@ To complete the MVP, focus on these tasks in order:
 - Recipes can now appear in multiple cookbooks (e.g., Carbonara in both "Family Favorites" and "International Cuisine")
 
 ### Phase 4: Recipe View Permissions
-- [ ] Update recipe detail page with permission checks
-- [ ] Conditionally render edit/delete/variant buttons
-   - [ ] Test with different roles
+- [ ] Update recipe detail page with permission checks for delete
+- [ ] Add delete button with canDeleteRecipe check
+- [ ] Test with different roles
 
-### Phase 5: Variant Permissions
-- [ ] Add permission checks to variant creation
-- [ ] Add permission checks to variant editing
-   - [ ] Update variant display to show creator
+### Phase 5: Variant Permissions ✅ COMPLETE
+- [x] Add permission checks to variant creation page
+  - Uses `canCreateVariant()` to check if user can create variants
+  - Shows permission denied banner if user lacks permissions
+  - Considers cookbook context (collaborative mode)
+- [x] Add permission checks to variant editing page
+  - Uses `canEditVariant()` to check if user can edit the variant
+  - Shows detailed permission denied page with explanation
+  - Checks variant creator, user, and cookbook context
+- [x] Add permission checks to recipe detail page
+  - Conditionally shows "Create Variant" button based on `canCreateVariant()`
+  - Conditionally shows "Edit Variant" button based on `canEditVariant()`
+  - Conditionally shows "Edit Recipe" button based on `canEditRecipe()`
+  - Gets cookbook context from recipe's `cookbookIds` array
+
+**Files Updated:**
+- `/src/app/(cookbook)/recipes/[id]/variant/page.tsx` - Variant creation with permissions
+- `/src/app/(cookbook)/recipes/[id]/variant/[variantId]/edit/page.tsx` - Variant editing with permissions
+- `/src/app/(cookbook)/recipes/[id]/page.tsx` - Recipe detail with conditional action buttons
 
 ### Phase 6: Cookbook List & Discovery
 - [ ] Filter cookbooks by visibility and membership
@@ -343,16 +362,19 @@ When moving from dummy data to a real database:
 ## Summary
 
 **What's Complete**:
-- ✅ Permission utility system
-- ✅ Member management UI
-- ✅ Basic permission enforcement on cookbook pages
-- ✅ Role-based UI rendering
+- ✅ Permission utility system (all 5 roles)
+- ✅ Member management UI with role changes and invitations
+- ✅ Permission enforcement on cookbook pages
+- ✅ Role-based UI rendering with color-coded badges
+- ✅ Cookbook deletion restricted to owners only
+- ✅ Note system for contributors (permission-based)
+- ✅ Recipe-cookbook associations (array-based, many-to-many)
+- ✅ Cookbook context in recipe creation flow
+- ✅ Permission-based "Add New Recipe" button
 
-**What's Missing**:
-- ⚠️ Recipe-cookbook association
-- ⚠️ Variant permission checks
-- ⚠️ Recipe view page permissions
-- ⚠️ Cookbook list filtering
-- ⚠️ Complete testing of all permission scenarios
+**What's Missing for MVP**:
+- ⚠️ Recipe delete button (Phase 4 - just needs delete button added)
+- ⚠️ Cookbook list filtering (Phase 6)
+- ⚠️ Complete testing of all permission scenarios (Phase 7)
 
-With the infrastructure in place, implementing the remaining features should be straightforward - mostly connecting the existing permission functions to the UI components.
+**Progress**: 4 out of 7 phases complete (Phases 1-3, 5 ✅)
